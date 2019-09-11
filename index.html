@@ -1,0 +1,80 @@
+    
+<html>
+    <head>
+      <title>CJD2 Compilador</title>
+      <style>
+        /* body {
+          background-color: #63431c;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        h1 {
+          font-family: impact;
+          margin: 0;
+          font-size: 35px;
+          text-shadow: 0px -1px 0px rgba(255,225,31,0.4);
+        }*/
+        textarea {
+          float:left;
+          margin: 10px;
+          resize: none;
+        }
+        table {
+          margin-top: 10px;
+          float:left;
+          border-collapse: collapse;
+          border: 1px solid #000;
+        }
+        td {
+          width: 32px;
+          height: 32px;
+          color: #FFF;
+          border: 1px solid #000;
+          text-align: center;
+          vertical-align: center;
+          font-family: arial;
+          font-size: 10px;
+          position: relative;
+          font-weight: bold;
+        }
+        td.pixel {
+          width: 4px;
+          height: 4px;
+          border: 0;
+        }
+        .pixel-index {
+          font-size: 10px;
+          display: inline-block;
+          position: absolute;
+          top: 1px;
+          right: 1px;
+          color: #927450;
+        }
+        a {
+          color: #FFF;
+          font-size: 10px;
+          font-family: arial;
+        }
+        .margin {
+          margin: 5px;
+        }
+        canvas{
+            margin: 10px;
+        }
+      </style>
+    </head>
+    <body>
+        <h1>Arquitetura CJD2 Compiler</h1>
+        <div><textarea id="Code" rows="25" cols="50">
+
+        </textarea></div>
+        <div id="Memory"></div>
+        <canvas id="myCanvas" width="256" height="256" style="border:1px solid #000000;">
+        </canvas>
+
+        <button type="buttonExec" onclick="execute()">Executar</button>
+        <script src="app.js"></script>
+  
+    </body>
+</html>
