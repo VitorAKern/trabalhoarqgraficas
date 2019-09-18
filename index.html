@@ -27,8 +27,8 @@
           border: 1px solid #000;
         }
         td {
-          width: 32px;
-          height: 32px;
+          width: 64px;
+          height: 64px;
           color: #FFF;
           border: 1px solid #000;
           text-align: center;
@@ -62,12 +62,30 @@
         canvas{
             margin: 10px;
         }
+        span .texto{
+          text-align: center;
+          font-weight:bold;
+        }
       </style>
     </head>
     <body>
         <h1>Arquitetura CJD2 Compiler</h1>
         <div><textarea id="Code" rows="25" cols="50">
-
+ .data
+ RESULT: DB #30, #0
+ VEZES: DB #31, #3
+ .enddata
+ .code
+ INICIO: LD VEZES
+ JZ FIM
+ SUB #1
+ ST VEZES
+ LD RESULT
+ ADD #2
+ ST RESULT
+ JMP INICIO
+ FIM: HALT
+ .endcode
         </textarea></div>
         <div id="Memory"></div>
         <canvas id="myCanvas" width="256" height="256" style="border:1px solid #000000;">
