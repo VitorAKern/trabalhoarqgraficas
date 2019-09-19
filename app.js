@@ -2,7 +2,7 @@ let Width = 8;
 let Height = 8;
 var memory = new Array(Width * Height);
 var debug = true;
-
+var ac = null;
 const command = {
     LD: 'LD',
     LD2: 'LD2',
@@ -20,7 +20,7 @@ function render() {
         const pixelIndex = column + ( Width * row )
   
         html += '<td>'
-        html += `<div id=${pixelIndex} class="pixel-index"><span>${pixelIndex}</span><br><span class="texto" id="text${pixelIndex}"></span></div>`
+        html += `<div id=${pixelIndex} class="pixel-index">${pixelIndex}<br><span class="texto" id="text${pixelIndex}"></span></div>`
         html += '</td>'
       }
   
@@ -40,7 +40,6 @@ function render() {
     var lines = document.getElementById('Code').value.split('\n');
     let auxData = [];
     let auxCode = [];
-    let j = 0;
     //Separa os blocos data e code em dois arrays auxiliares
     for(let i = 0; i < lines.length; i++){
       if(lines[i].toString().trimStart() === ".data"){
@@ -62,21 +61,17 @@ function render() {
       }
     }
 
+    //SET DADOS NA MEMORIA
     for(let i = 0; i < auxData.length; i++){
-      var aux = auxData[i].trimStart().split(' ').forEach((item) => {
-        if (item == "DB"){
-          //document.getElementById(`text${j}`).innerText = `${item[i-1]}[${item[i+1]}]`;
-          document.getElementById(`text0`).innerText = `RESULT[30]`;
-          // document.getElementById(`text${item[i+1]}`).innerText = `${item[i+2]}`;
-          document.getElementById(`text30`).innerText = `0`;
+      var arrComandos = auxData[i].trimStart().split(' ');
+      for (var k = 0; k < arrComandos.length; k++){
+        arrComandos[k].toString().endsWith(":");
+        if (arrComandos[k].toString() === "DB"){
+          document.getElementById(`text${i}`).innerText = `${arrComandos[k - 1]}[${arrComandos[k + 1]}]`;
+          document.getElementById(`text${arrComandos[k + 1].replace("#","").replace(",","")}`).innerText = arrComandos[k + 2].replace("#","");
         }
-        
-        j++;
-      });
-
+      };
     }
-    //console.log(auxData);
-    //console.log(auxCode);
 
     // let aux;
     // var position;

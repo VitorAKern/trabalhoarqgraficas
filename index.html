@@ -66,6 +66,9 @@
           text-align: center;
           font-weight:bold;
         }
+        .ac {
+          margin:10px;
+        }
       </style>
     </head>
     <body>
@@ -90,8 +93,12 @@
         <div id="Memory"></div>
         <canvas id="myCanvas" width="256" height="256" style="border:1px solid #000000;">
         </canvas>
-
-        <button type="buttonExec" onclick="execute()">Executar</button>
+        <br>
+        <span class="ac">AC
+        <input type="text" id="ac" name="acumulator" disabled="true">
+        </span>
+        <br>
+        <button class="ac" type="buttonExec" onclick="execute()">Executar</button>
         <script src="app.js"></script>
   
     </body>
