@@ -4,101 +4,107 @@ var memory = new Array(Width * Height);
 var debug = true;
 var ac = null;
 const command = {
-    LD: 'LD',
-    LD2: 'LD2',
-    LD3: 'LD3',
-    DB: 'DB'
+  INICIO: 'INICIO',
+  FIM: 'FIM',
+  LD: 'LD',
+  LD2: 'LD2',
+  LD3: 'LD3',
+  DB: 'DB'
 }
 
 function render() {
-    let html = '<table cellpadding=0 cellspacing=0>'
-  
-    for (let row = 0; row < Height; row++) {
-      html += '<tr>'
-  
-      for (let column = 0; column < Width; column++) {
-        const pixelIndex = column + ( Width * row )
-  
-        html += '<td>'
-        html += `<div id=${pixelIndex} class="pixel-index">${pixelIndex}<br><span class="texto" id="text${pixelIndex}"></span></div>`
-        html += '</td>'
-      }
-  
-      html += '</tr>'
+  let html = '<table cellpadding=0 cellspacing=0>'
+
+  for (let row = 0; row < Height; row++) {
+    html += '<tr>'
+
+    for (let column = 0; column < Width; column++) {
+      const pixelIndex = column + (Width * row)
+
+      html += '<td>'
+      html += `<div id=${pixelIndex} class="pixel-index">${pixelIndex}<br><span class="texto" id="text${pixelIndex}"></span></div>`
+      html += '</td>'
     }
-  
-    html += '</table>';
-  
-    document.querySelector('#Memory').innerHTML = html  ;
+
+    html += '</tr>'
   }
 
-  function setData(){
+  html += '</table>';
 
-  }
+  document.querySelector('#Memory').innerHTML = html;
+}
 
-  function execute(){
-    var lines = document.getElementById('Code').value.split('\n');
-    let auxData = [];
-    let auxCode = [];
-    //Separa os blocos data e code em dois arrays auxiliares
-    for(let i = 0; i < lines.length; i++){
-      if(lines[i].toString().trimStart() === ".data"){
-          while(lines[i].toString().trimStart() !== ".enddata"){
-          if(lines[i+1].toString().trimStart() !== ".enddata"){
-              auxData.push(lines[i+1]);     
-            }
-            i++;
-          }
-      }
+function setData() {
 
-      if(lines[i].toString().trimStart() === ".code"){
-          while(lines[i].toString().trimStart() !== ".endcode"){
-            if(lines[i+1].toString().trimStart() !== ".endcode"){
-              auxCode.push(lines[i+1]);     
-            }
-            i++;
-          }
-      }
-    }
+}
 
-    //SET DADOS NA MEMORIA
-    for(let i = 0; i < auxData.length; i++){
-      var arrComandos = auxData[i].trimStart().split(' ');
-      for (var k = 0; k < arrComandos.length; k++){
-        arrComandos[k].toString().endsWith(":");
-        if (arrComandos[k].toString() === "DB"){
-          document.getElementById(`text${i}`).innerText = `${arrComandos[k - 1]}[${arrComandos[k + 1]}]`;
-          document.getElementById(`text${arrComandos[k + 1].replace("#","").replace(",","")}`).innerText = arrComandos[k + 2].replace("#","");
-        }
-      };
-    }
+function execute() {
+  var arrTable = new Array(64);
+  var dictCache = {}
+  dictCache['INICIO'] = 1;
+  var a = 'INICIO';
+  console.log(dictCache[a]);
 
-    // let aux;
-    // var position;
-    // var stopCond;
-    // for(var i = 0;i < lines.length;i++){
-    //     let aux = lines[i];
-    //     for(let j = 0; j < lines[i].length; i++){
-    //         if(stopCond == true){
-    //             if(aux[j] == " "){
-    //                 stopCond = false;
-    //                 break;
-    //             }
-    //             position += aux[j];
-    //         }
-    //         if(aux[j] == "#"){
-    //             stopCond = true;
-    //             position = aux[j+1] + aux[j+2];
-    //         }
-    //     }
-    //     commands = lines[i].substring(1,3);
+  // dictCache[var]
+  var lines = document.getElementById('Code').value.split('\n');
+  let auxData = [];
+  let auxCode = [];
+  let arrProcessor = [];
+  // for (let i = 0; i < lines.length; i++) {
+  //   arrProcessor.push(lines[i].trimStart().split(' '));
+  // }
+  // console.log(arrProcessor);
 
-    //     switch(commands){
-    //         case commands.DB:
-    //         document.getElementById(position).value = "50"
+  // //Separa os blocos data e code em dois arrays auxiliares
+  // for (let i = 0; i < lines.length; i++) {
+  //   if (lines[i].toString().trimStart() === ".data") {
+  //     while (lines[i].toString().trimStart() !== ".enddata") {
+  //       if (lines[i + 1].toString().trimStart() !== ".enddata") {
+  //         auxData.push(lines[i + 1]);
+  //       }
+  //       i++;
+  //     }
+  //   }
 
-    //     }
-        //code here using lines[i] which will give you each line
-    }
+  //   if (lines[i].toString().trimStart() === ".code") {
+  //     while (lines[i].toString().trimStart() !== ".endcode") {
+  //       if (lines[i + 1].toString().trimStart() !== ".endcode") {
+  //         auxCode.push(lines[i + 1]);
+  //       }
+  //       i++;
+  //     }
+  //   }
+  // }
 
-  this.render();
+  //   //SET DADOS NA MEMORIA
+  //   for (let i = 0; i < auxData.length; i++) {
+  //     var arrComandos = auxData[i].trimStart().split(' ');
+  //     for (var k = 0; k < arrComandos.length; k++) {
+  //       arrComandos[k].toString().endsWith(":");
+  //       if (arrComandos[k].toString() === "DB") {
+  //         arrTable[i] = `${arrComandos[k - 1]}[${arrComandos[k + 1].replace("#", "").replace(",", "")}]`;
+  //         arrTable[arrComandos[k + 1].replace("#", "").replace(",", "")] = arrComandos[k + 2].replace("#", "");
+  //         document.getElementById(`text${i}`).innerText = arrTable[i];
+  //         document.getElementById(`text${arrComandos[k + 1].replace("#", "").replace(",", "")}`).innerText = arrTable[arrComandos[k + 1].replace("#", "").replace(",", "")];
+  //       }
+  //     };
+  //   }
+  // console.log(arrTable);
+  //   for (let i = 0; i < auxCode.length; i++) {
+  //     var arrComandos = auxCode[i].trimStart().split(' ');
+
+  //     switch (arrComandos[i].toString()) {
+  //       case "INICIO:":
+  //         arrTable[i + auxData.length] = `${arrComandos[i + 1]}[${arrComandos[i + 2]}]`;
+  //         document.getElementById(`text${i + auxData.length}`).innerText = "INICIO";
+  //         document.getElementById(`text${i + auxData.length + 1}`).innerText = arrTable[i + auxData.length];
+  //         break;
+  //       case "FIM:":
+  //         i = auxCode.length;
+  //         break;
+  //     }
+  //   }
+  //RUN CODE
+}
+
+this.render();
