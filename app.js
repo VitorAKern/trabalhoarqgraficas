@@ -6,22 +6,16 @@ var ac = null;
 var ac2 = null;
 var ac3 = null;
 var pc = 0;
-var pos = new Object({ x: 0, y: 0 });
-
-// const command = {
-//   INICIO: 'INICIO',
-//   FIM: 'FIM',
-//   LD: 'LD',
-//   LD2: 'LD2',
-//   LD3: 'LD3',
-//   DB: 'DB'
-// }
+var pos = [];
+var canvas = document.getElementById("myCanvas");
+var context = canvas.getContext('2d');
 
 function render() {
   let html = '<table cellpadding=0 cellspacing=0>'
 
   for (let row = 0; row < Height; row++) {
     html += '<tr>'
+
 
     for (let column = 0; column < Width; column++) {
       const pixelIndex = column + (Width * row)
@@ -46,11 +40,29 @@ function executeStep() {
 
   switch (command) {
     case "LD":
-      this.setAC(memory[this.getValue(memory[pc + 1])]);
+      this.setAC(memory[this.getValue(memory[pc + 1])], "1");
+      break;
+    case "LD2":
+      this.setAC(memory[this.getValue(memory[pc + 1])], "2");
+      this.setAC(memory[this.getValue(memory[pc + 1])], "1");
+      break;
+    case "LD2":
+      this.setAC(memory[this.getValue(memory[pc + 1])], "2");
+      break;
+    case "LD3":
+      this.setAC(memory[this.getValue(memory[pc + 1])], "3");
       break;
     case "ST":
       memory[this.getValue(memory[pc + 1])] = ac;
       document.getElementById(`text${this.getValue(memory[pc + 1])}`).innerHTML = ac;
+      break;
+    case "ST2":
+      memory[this.getValue(memory[pc + 1])] = ac2;
+      document.getElementById(`text${this.getValue(memory[pc + 1])}`).innerHTML = ac2;
+      break;
+    case "ST3":
+      memory[this.getValue(memory[pc + 1])] = ac3;
+      document.getElementById(`text${this.getValue(memory[pc + 1])}`).innerHTML = ac3;
       break;
     case "JZ":
       debugger;
@@ -63,10 +75,13 @@ function executeStep() {
       this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
       break;
     case "POS":
+      pos[0] = ac;
+      pos[1] = ac2
       this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
       break;
     case "PXL":
-      this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
+      context.fillStyle = `rgb(${ac},${ac2},${ac3})`;
+      context.fillRect(pos[0], pos[1], 5, 5);
       break;
     case "ADD":
       ac += parseInt(memory[pc + 1].replace("#", ""));
@@ -105,9 +120,22 @@ function atualizaPC(pos) {
   document.getElementById("pc").value = pc;
 }
 
-function setAC(value) {
-  ac = parseInt(value);
-  document.getElementById("ac").value = value;
+function setAC(value, cmd) {
+  switch (cmd) {
+    case "1":
+        ac = parseInt(value);
+        document.getElementById("ac").value = value;
+      break;
+    case "2":
+        ac2 = parseInt(value);
+        document.getElementById("ac2").value = value;
+      break;
+    case "3":
+        ac3 = parseInt(value);
+        document.getElementById("ac3").value = value;
+      break;
+  }
+  
 }
 
 function load() {
