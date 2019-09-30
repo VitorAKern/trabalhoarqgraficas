@@ -1,16 +1,21 @@
 let Width = 8;
 let Height = 8;
 var memory = new Array(Width * Height);
-var debug = true;
+let vars = [];
 var ac = null;
-const command = {
-  INICIO: 'INICIO',
-  FIM: 'FIM',
-  LD: 'LD',
-  LD2: 'LD2',
-  LD3: 'LD3',
-  DB: 'DB'
-}
+var ac2 = null;
+var ac3 = null;
+var pc = 0;
+var pos = new Object({ x: 0, y: 0 });
+
+// const command = {
+//   INICIO: 'INICIO',
+//   FIM: 'FIM',
+//   LD: 'LD',
+//   LD2: 'LD2',
+//   LD3: 'LD3',
+//   DB: 'DB'
+// }
 
 function render() {
   let html = '<table cellpadding=0 cellspacing=0>'
@@ -34,122 +39,142 @@ function render() {
   document.querySelector('#Memory').innerHTML = html;
 }
 
-function setData() {
+function executeStep() {
+  let command = memory[pc];
 
+
+
+  switch (command) {
+    case "LD":
+      this.setAC(memory[this.getValue(memory[pc + 1])]);
+      break;
+    case "ST":
+      memory[this.getValue(memory[pc + 1])] = ac;
+      document.getElementById(`text${this.getValue(memory[pc + 1])}`).innerHTML = ac;
+      break;
+    case "JZ":
+      debugger;
+      if (ac == 1) {
+
+        this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
+      }
+      break;
+    case "JMP":
+      this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
+      break;
+    case "POS":
+      this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
+      break;
+    case "PXL":
+      this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
+      break;
+    case "ADD":
+      ac += parseInt(memory[pc + 1].replace("#", ""));
+      this.setAC(ac);
+      break;
+    case "SUB":
+      ac -= parseInt(memory[pc + 1].replace("#", ""));
+      this.setAC(ac);
+      break;
+    case "HALT":
+      this.atualizaPC(0);
+      this.clearMemory();
+      break;
+  }
+  pc++;
+  this.atualizaPC(pc);
 }
 
-function execute() {
+
+function getValue(key) {
+  return vars.find(o => o.key === key).value;
+}
+
+function clearMemory() {
+  memory = new Array(Width * Height);
+  vars = [];
+  pc = 0;
+  ac = 0;
+  this.atualizaPC(pc);
+  this.setAC(ac);
+  this.drawMemory();
+}
+
+function atualizaPC(pos) {
+  pc = pos;
+  document.getElementById("pc").value = pc;
+}
+
+function setAC(value) {
+  ac = parseInt(value);
+  document.getElementById("ac").value = value;
+}
+
+function load() {
+  this.clearMemory();
+  this.atualizaPC(pc);
   var data = false;
   var code = false;
-  var operators = {};
-  // var dictCache = {}
-  // dictCache['INICIO'] = 1;
-  // var a = 'INICIO';
-  // console.log(dictCache[a]);
-
-  // dictCache[var]
   var lines = document.getElementById('Code').value.split('\n');
   var memCount = 0;
-  let auxCode = [];
   let arrProcessor = [];
 
   for (let i = 0; i < lines.length; i++) {
     arrProcessor.push(lines[i].trimStart().split(' '));
   }
-  // Joga todos os comandos pra memória
+
   for (let i = 0; i < arrProcessor.length; i++) {
-    memCount++;
     for (let j = 0; j < arrProcessor[i].length; j++) {
-      memory[memCount] = arrProcessor[i][j];
-      memCount++;
-    }
-  }
+      if (arrProcessor[i][j]) {
+        if (arrProcessor[i][j] === ".enddata") {
+          data = false;
+        }
+        if (data === true) {
+          if (arrProcessor[i][j].toString().endsWith(':')) {
+            memory[memCount] = new Object({ key: arrProcessor[i][j].replace(":", ""), value: arrProcessor[i][j + 2].replace("#", "").replace(",", "") });
+            if (memory[memCount].key) {
+              vars.push({ key: memory[memCount].key, value: memory[memCount].value });
+            }
+            memCount++;
+          }
+          if (arrProcessor[i][j].toString() === "DB") {
+            memory[arrProcessor[i][j + 1].replace("#", "").replace(",", "")] = arrProcessor[i][j + 2].replace("#", "");
+          }
+        }
+        if (arrProcessor[i][j] === ".data") {
+          data = true;
+        }
 
-
-  for (let i = 0; i < memory.length; i++) {
-    if (memory[i] === ".enddata") {
-      data = false;
-    }
-
-    if (data === true) {
-      if (memory[i].toString().endsWith(':')) {
-        operators[memory[i]];
+        if (arrProcessor[i][j] === ".endcode") {
+          code = false;
+        }
+        if (code === true) {
+          if (arrProcessor[i][j].toString().endsWith(":")) {
+            memory[memCount] = new Object({ key: arrProcessor[i][j].replace(":", ""), value: memCount + 1 });
+            if (memory[memCount].key) {
+              vars.push({ key: memory[memCount].key, value: memory[memCount].value });
+            }
+            memCount++;
+          }
+          else {
+            memory[memCount] = arrProcessor[i][j];
+            memCount++;
+          }
+        }
+        if (arrProcessor[i][j] === ".code") {
+          code = true;
+        }
       }
     }
-
-    if (memory[i] === ".data") {
-      data = true;
-    }
   }
+  this.drawMemory();
   console.log(memory);
-  // for (let i = 0; i < arrProcessor.length; i++){
-  //   debugger;
-  //   if(arrProcessor[i][0] === ".enddata")
-  //   {
-  //     data = false;
-  //   }
+}
 
-  //   if (data === true){
-
-  //     console.log(arrProcessor[i]);
-  //   }
-
-  //   if (arrProcessor[i][0] === ".data"){
-  //     data = true;
-  //   }
-
-
-  // }
-  // //Separa os blocos data e code em dois arrays auxiliares
-  // for (let i = 0; i < lines.length; i++) {
-  //   if (lines[i].toString().trimStart() === ".data") {
-  //     while (lines[i].toString().trimStart() !== ".enddata") {
-  //       if (lines[i + 1].toString().trimStart() !== ".enddata") {
-  //         auxData.push(lines[i + 1]);
-  //       }
-  //       i++;
-  //     }
-  //   }
-
-  //   if (lines[i].toString().trimStart() === ".code") {
-  //     while (lines[i].toString().trimStart() !== ".endcode") {
-  //       if (lines[i + 1].toString().trimStart() !== ".endcode") {
-  //         auxCode.push(lines[i + 1]);
-  //       }
-  //       i++;
-  //     }
-  //   }
-  // }
-
-  //SET DADOS NA MEMORIA
-  // for (let i = 0; i < auxData.length; i++) {
-  //   var arrComandos = auxData[i].trimStart().split(' ');
-  //   for (var k = 0; k < arrComandos.length; k++) {
-  //     arrComandos[k].toString().endsWith(":");
-  //     if (arrComandos[k].toString() === "DB") {
-  //       arrTable[i] = `${arrComandos[k - 1]}[${arrComandos[k + 1].replace("#", "").replace(",", "")}]`;
-  //       arrTable[arrComandos[k + 1].replace("#", "").replace(",", "")] = arrComandos[k + 2].replace("#", "");
-  //       document.getElementById(`text${i}`).innerText = arrTable[i];
-  //       document.getElementById(`text${arrComandos[k + 1].replace("#", "").replace(",", "")}`).innerText = arrTable[arrComandos[k + 1].replace("#", "").replace(",", "")];
-  //     }
-  //   };
-  // }
-  // console.log(arrTable);
-  //   for (let i = 0; i < auxCode.length; i++) {
-  //     var arrComandos = auxCode[i].trimStart().split(' ');
-
-  //     switch (arrComandos[i].toString()) {
-  //       case "INICIO:":
-  //         arrTable[i + auxData.length] = `${arrComandos[i + 1]}[${arrComandos[i + 2]}]`;
-  //         document.getElementById(`text${i + auxData.length}`).innerText = "INICIO";
-  //         document.getElementById(`text${i + auxData.length + 1}`).innerText = arrTable[i + auxData.length];
-  //         break;
-  //       case "FIM:":
-  //         i = auxCode.length;
-  //         break;
-  //     }
-  //   }
-  //RUN CODE
+function drawMemory() {
+  for (let i = 0; i < memory.length; i++) {
+    document.getElementById(`text${i}`).innerHTML = memory[i] === undefined ? "" : memory[i].key ? memory[i].key : memory[i];
+  }
 }
 
 this.render();
