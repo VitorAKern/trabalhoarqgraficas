@@ -75,23 +75,138 @@
         <h1>Arquitetura CJD2 Compiler</h1>
         <div><textarea id="Code" rows="25" cols="50">
  .data
- RESULT: DB #30, #0
- VEZES: DB #31, #3
+ XORI: DB #230, #100
+ YORI: DB #231, #100
+ YSOMADO: DB #232, #0
+ RAIO: DB #241, #50
+ ERR: DB #233, #0
+ RANDRESULT: DB #234, #0
+ X: DB #236, #0
+ Y: DB #237, #0
+ R: DB #238, #0
+ G: DB #239, #0
+ B: DB #240, #255
  .enddata
  .code
- INICIO: LD VEZES
+ DESENHA: LD RAIO
+ ST X
+ WHILE:   LD X
+ SUB Y
  JZ FIM
+ JN FIM
+ LD YORI
+ ADD Y
+ ST YSOMADO
+ LD2 YSOMADO
+ LD XORI
+ ADD X
+ POS
+ LD R
+ LD2 G
+ LD3 B
+ PXL
+ LD YORI
+ ADD X
+ ST YSOMADO
+ LD2 YSOMADO
+ LD XORI
+ ADD Y
+ POS
+ LD R
+ LD2 G
+ LD3 B
+ PXL
+ LD YORI
+ ADD X
+ ST YSOMADO
+ LD2 YSOMADO
+ LD XORI
+ SUB Y
+ POS
+ LD R
+ LD2 G
+ LD3 B
+ PXL
+ LD YORI
+ ADD Y
+ ST YSOMADO
+ LD2 YSOMADO
+ LD XORI
+ SUB X
+ POS
+ LD R
+ LD2 G
+ LD3 B
+ PXL
+ LD YORI
+ SUB Y
+ ST YSOMADO
+ LD2 YSOMADO
+ LD XORI
+ SUB X
+ POS
+ LD R
+ LD2 G
+ LD3 B
+ PXL
+ LD YORI
+ SUB X
+ ST YSOMADO
+ LD2 YSOMADO
+ LD XORI
+ SUB Y
+ POS
+ LD R
+ LD2 G
+ LD3 B
+ PXL
+ LD YORI
+ SUB X
+ ST YSOMADO
+ LD2 YSOMADO
+ LD XORI
+ ADD Y
+ POS
+ LD R
+ LD2 G
+ LD3 B
+ PXL
+ LD YORI
+ SUB Y
+ ST YSOMADO
+ LD2 YSOMADO
+ LD XORI
+ ADD X
+ POS
+ LD R
+ LD2 G
+ LD3 B
+ PXL
+ LD ERR
+ JP ERRPOSITIVO
+ LD Y
+ ADD #1
+ ST Y
+ LD ERR
+ ADD Y
+ ADD Y
+ ADD #1
+ ST ERR
+ JMP WHILE
+ ERRPOSITIVO: LD X
  SUB #1
- ST VEZES
- LD RESULT
- ADD #2
- ST RESULT
- JMP INICIO
+ ST X
+ LD ERR
+ SUB X
+ SUB X
+ ADD #1
+ ST ERR
+ JMP WHILE
  FIM: HALT
  .endcode
         </textarea></div>
         <div id="Memory"></div>
-        <canvas id="myCanvas" width="256" height="256" style="border:1px solid #000000;">
+        <canvas id="myCanvas" width="619" height="306" style="border:1px solid #000000;">
         </canvas>
         <br>
         <span class="ac">AC
@@ -112,6 +227,7 @@
         <button class="ac" type="buttonExec" onclick="load()">Load</button>
         <button class="ac" type="buttonExec" onclick="executeStep()">Execute Step</button>
         <button class="ac" type="buttonExec" onclick="executeAll()">Execute All</button>
+        <button class="ac" type="buttonExec" onclick="clearMemory()">Clear</button>
         <script src="app.js"></script>
   
     </body>

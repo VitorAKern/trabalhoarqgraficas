@@ -1,5 +1,5 @@
-let Width = 8;
-let Height = 8;
+let Width = 16;
+let Height = 16;
 var memory = new Array(Width * Height);
 let vars = [];
 var ac = null;
@@ -36,10 +36,9 @@ function render() {
 function executeStep() {
   let command = memory[pc];
 
-
-
   switch (command) {
     case "LD":
+      debugger;
       this.setAC(memory[this.getValue(memory[pc + 1])], "1");
       break;
     case "LD2":
@@ -64,10 +63,23 @@ function executeStep() {
       memory[this.getValue(memory[pc + 1])] = ac3;
       document.getElementById(`text${this.getValue(memory[pc + 1])}`).innerHTML = ac3;
       break;
+    case "JP":
+      if (ac > 0) {
+        this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
+      }
+      break;
     case "JZ":
-      debugger;
-      if (ac == 1) {
-
+      if (ac == 0) {
+        this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
+      }
+      break;
+    case "JNZ":
+      if (ac != 0) {
+        this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
+      }
+      break;
+    case "JN":
+      if (ac < 0) {
         this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
       }
       break;
@@ -75,31 +87,48 @@ function executeStep() {
       this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
       break;
     case "POS":
+      debugger;
       pos[0] = ac;
       pos[1] = ac2
-      this.atualizaPC(this.getValue(memory[pc + 1]) - 1);
       break;
     case "PXL":
       context.fillStyle = `rgb(${ac},${ac2},${ac3})`;
       context.fillRect(pos[0], pos[1], 5, 5);
       break;
     case "ADD":
-      ac += parseInt(memory[pc + 1].replace("#", ""));
+      if (isNaN(memory[pc + 1].replace("#", ""))) {
+        debugger;
+        ac += parseInt(memory[this.getValue(memory[pc + 1])]);
+      }
+      else {
+        ac += parseInt(memory[pc + 1].replace("#", ""));
+      }
       this.setAC(ac);
       break;
     case "SUB":
-      ac -= parseInt(memory[pc + 1].replace("#", ""));
+      if (isNaN(memory[pc + 1].replace("#", ""))) {
+        debugger;
+        ac -= parseInt(memory[this.getValue(memory[pc + 1])]);
+      } else {
+        ac -= parseInt(memory[pc + 1].replace("#", ""));
+      }
       this.setAC(ac);
       break;
     case "HALT":
       this.atualizaPC(0);
-      this.clearMemory();
+      return true;
       break;
   }
   pc++;
   this.atualizaPC(pc);
 }
 
+function executeAll() {
+  let end = false;
+  while (!end) {
+    end = this.executeStep();
+  }
+}
 
 function getValue(key) {
   return vars.find(o => o.key === key).value;
@@ -110,8 +139,13 @@ function clearMemory() {
   vars = [];
   pc = 0;
   ac = 0;
+  ac2 = 0;
+  ac3 = 0;
+  context.clearRect(0, 0, 256, 256);
   this.atualizaPC(pc);
-  this.setAC(ac);
+  this.setAC(ac, "1");
+  this.setAC(ac2, "2");
+  this.setAC(ac3, "3");
   this.drawMemory();
 }
 
@@ -123,19 +157,19 @@ function atualizaPC(pos) {
 function setAC(value, cmd) {
   switch (cmd) {
     case "1":
-        ac = parseInt(value);
-        document.getElementById("ac").value = value;
+      ac = parseInt(value);
+      document.getElementById("ac").value = value;
       break;
     case "2":
-        ac2 = parseInt(value);
-        document.getElementById("ac2").value = value;
+      ac2 = parseInt(value);
+      document.getElementById("ac2").value = value;
       break;
     case "3":
-        ac3 = parseInt(value);
-        document.getElementById("ac3").value = value;
+      ac3 = parseInt(value);
+      document.getElementById("ac3").value = value;
       break;
   }
-  
+
 }
 
 function load() {
